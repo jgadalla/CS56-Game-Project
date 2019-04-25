@@ -8,42 +8,11 @@ and may not be redistributed without written permission.*/
 #include <string>
 #include <iostream>
 #include "Button.hpp"
+#include "LTexture.hpp"
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 792;
 const int SCREEN_HEIGHT = 469;
-
-//Texture wrapper class
-class LTexture
-{
-  public:
-	//Initializes variables
-	LTexture();
-
-	//Deallocates memory
-	~LTexture();
-
-	//Loads image at specified path
-	bool loadFromFile(std::string path);
-
-	//Deallocates texture
-	void free();
-
-	//Renders texture at given point
-	void render(int x, int y);
-
-	//Gets image dimensions
-	int getWidth();
-	int getHeight();
-
-  private:
-	//The actual hardware texture
-	SDL_Texture *mTexture;
-
-	//Image dimensions
-	int mWidth;
-	int mHeight;
-};
 
 //Starts up SDL and creates window
 bool init();
@@ -74,87 +43,7 @@ SDL_Renderer *gRenderer = NULL;
 LTexture startTexture;
 LTexture gameTexture;
 
-LTexture::LTexture()
-{
-	//Initialize
-	mTexture = NULL;
-	mWidth = 0;
-	mHeight = 0;
-}
 
-LTexture::~LTexture()
-{
-	//Deallocate
-	free();
-}
-
-bool LTexture::loadFromFile(std::string path)
-{
-	//Get rid of preexisting texture
-	free();
-
-	//The final texture
-	SDL_Texture *newTexture = NULL;
-
-	//Load image at specified path
-	SDL_Surface *loadedSurface = IMG_Load(path.c_str());
-	if (loadedSurface == NULL)
-	{
-		printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
-	}
-	else
-	{
-
-		//Create texture from surface pixels
-		newTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
-		if (newTexture == NULL)
-		{
-			printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
-		}
-		else
-		{
-			//Get image dimensions
-			mWidth = loadedSurface->w;
-			mHeight = loadedSurface->h;
-		}
-
-		//Get rid of old loaded surface
-		SDL_FreeSurface(loadedSurface);
-	}
-
-	//Return success
-	mTexture = newTexture;
-	return mTexture != NULL;
-}
-
-void LTexture::free()
-{
-	//Free texture if it exists
-	if (mTexture != NULL)
-	{
-		SDL_DestroyTexture(mTexture);
-		mTexture = NULL;
-		mWidth = 0;
-		mHeight = 0;
-	}
-}
-
-void LTexture::render(int x, int y)
-{
-	//Set rendering space and render to screen
-	SDL_Rect renderQuad = {x, y, mWidth, mHeight};
-	SDL_RenderCopy(gRenderer, mTexture, NULL, &renderQuad);
-}
-
-int LTexture::getWidth()
-{
-	return mWidth;
-}
-
-int LTexture::getHeight()
-{
-	return mHeight;
-}
 
 int check_click_in_rect(int x, int y, SDL_Rect *rect)
 {
@@ -234,13 +123,13 @@ bool loadMedia()
 
 	//Load PNG surface into textures
 
-	if (!startTexture.loadFromFile("PNGs/Start-Screen.png"))
+	if (!startTexture.loadFromFile("PNGs/Start-Screen.png", gRenderer))
 	{
 		printf("Failed to load Foo' texture image!\n");
 		success = false;
 	}
 
-	if (!gameTexture.loadFromFile("PNGs/Game-Screen.png"))
+	if (!gameTexture.loadFromFile("PNGs/Game-Screen.png", gRenderer))
 	{
 		printf("Failed to load background texture image!\n");
 		success = false;
@@ -312,11 +201,6 @@ int main(int argc, char *args[])
 			//Main loop flag
 			bool quit = false;
 			bool start_screen = true;
-			// SDL_Rect *start_button = new SDL_Rect();
-			// start_button->x = 286;
-			// start_button->y = 132;
-			// start_button->w = 208;
-			// start_button->h = 57;
 
 			Button* start_button = new Button(286, 132);
 
@@ -356,12 +240,12 @@ int main(int argc, char *args[])
 				if (start_screen)
 				{
 					// SDL_BlitSurface( gStartSurface, NULL, gScreenSurface, NULL );
-					startTexture.render(0, 0);
+					startTexture.render(0, 0, gRenderer);
 				}
 				else
 				{
 					// SDL_BlitSurface( gGameSurface, NULL, gScreenSurface, NULL );
-					gameTexture.render(0, 0);
+					gameTexture.render(0, 0, gRenderer);
 				}
 				//Update the surface
 				//SDL_UpdateWindowSurface( gWindow );
