@@ -1,0 +1,53 @@
+Sixth Street Scramble Timeline:
+
+Week 1: April 14th - 20th
+
+Deadlines:
+April 15th - Homework 4 due
+Goals:
+Work on our first sprint. Be able to open our start screen, 
+click the start button, and move to our game screen. From there, 
+go to the end screen from a click. 
+
+Relevant Files to be completed:
+main.cpp
+button.cpp
+button.hpp
+
+Week 2: April 21st - 27th
+
+Deadlines:
+April 21st - Finish our first sprint
+
+April 22nd - First progress video due
+
+April 25th - Finish sprint 2
+
+Goals:
+1. This week we will finish up our first sprint.
+
+2. Finish second sprint by end of thursday. In this sprint, we want to have a basic unit
+move across the screen to the other side and disappear once we enter 
+our game screen.
+
+3. Begin working on third sprint: In this sprint, we are going to have multiple units
+moving across the screen, from the 4 roads, and disappearing once they leave the screen
+
+
+Relevant Files to be completed:
+Unit.cpp      Truck.cpp
+Unit.hpp      Truck.hpp
+Car.cpp       Semi.cpp
+Car.hpp       Semi.hpp
+Sedan.cpp     
+Sedan.hpp
+
+
+
+Week 3: April 28th - May 4th
+
+TBD
+
+Week 4: May 5th - 8th
+
+TBD

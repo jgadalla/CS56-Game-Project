@@ -1,0 +1,24 @@
+Sprint Tracker:
+
+Sprint 1:
+Main menu, one working button on menu
+Gameplay screen on click of that button
+Gameover on mouse click
+
+Sprint 2:
+After start game, cars move on screen
+
+Sprint 3:
+Cars stop at stop sign, go on key press
+
+Sprint 4:
+Collision detection, game over when two units collide
+
+Sprint 5:
+Different units/textures
+
+Sprint 6: 
+Implement options, difficulty
+
+Sprint 7:
+Sound
