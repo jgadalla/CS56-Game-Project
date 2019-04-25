@@ -230,6 +230,13 @@ int main(int argc, char *args[])
 						{
 							start_screen = false;
 						}
+
+					}
+
+					const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
+
+					if (currentKeyStates[SDLK_ESCAPE]){
+						quit = true;
 					}
 				}
 
@@ -240,12 +247,12 @@ int main(int argc, char *args[])
 				if (start_screen)
 				{
 					// SDL_BlitSurface( gStartSurface, NULL, gScreenSurface, NULL );
-					startTexture.render(0, 0, gRenderer);
+					startTexture.render(0, 0, startTexture.getTexRect(0,0), 0.0, NULL, SDL_FLIP_NONE, gRenderer);
 				}
 				else
 				{
 					// SDL_BlitSurface( gGameSurface, NULL, gScreenSurface, NULL );
-					gameTexture.render(0, 0, gRenderer);
+					gameTexture.render(0, 0, gameTexture.getTexRect(0,0), 0.0, NULL, SDL_FLIP_NONE, gRenderer);
 				}
 				//Update the surface
 				//SDL_UpdateWindowSurface( gWindow );

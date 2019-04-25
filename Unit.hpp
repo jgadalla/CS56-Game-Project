@@ -28,11 +28,8 @@ protected:
   float speedy;
   int width;
   int height;
-  float friction; //lower speed means more friction
 
-  enum ANIMATION_FRAMES {FLYING_FRAMES = 3};
-  SDL_Rect spriteClips[ FLYING_FRAMES ];
-  LTexture* spriteSheetTexture;
+  LTexture* unitTexture;
 
 public:
   Unit(LTexture* image, float x, float y);

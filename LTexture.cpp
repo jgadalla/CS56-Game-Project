@@ -65,11 +65,36 @@ void LTexture::free()
 	}
 }
 
-void LTexture::render(int x, int y, SDL_Renderer* renderer)
+SDL_Rect* LTexture::getTexRect(int x, int y){
+    SDL_Rect* rect = new SDL_Rect();
+    rect->x = x;
+    rect->y = y;
+    rect->w = mWidth;
+    rect->h = mHeight;
+    return rect;
+}
+
+//void LTexture::render(int x, int y, SDL_Renderer* renderer)
+// {
+// 	//Set rendering space and render to screen
+// 	SDL_Rect renderQuad = {x, y, mWidth, mHeight};
+// 	SDL_RenderCopy(renderer, mTexture, NULL, &renderQuad);
+// }
+
+void LTexture::render( int x, int y, SDL_Rect* clip , double angle, SDL_Point* center, SDL_RendererFlip flip, SDL_Renderer* gRenderer)
 {
-	//Set rendering space and render to screen
-	SDL_Rect renderQuad = {x, y, mWidth, mHeight};
-	SDL_RenderCopy(renderer, mTexture, NULL, &renderQuad);
+  //Set rendering space and render to screen
+  SDL_Rect renderQuad = { x, y, mWidth, mHeight };
+
+  //Set clip rendering dimensions
+  if( clip != NULL )
+    {
+      renderQuad.w = clip->w;
+      renderQuad.h = clip->h;
+    }
+
+  //Render to screen
+  SDL_RenderCopyEx( gRenderer, mTexture, clip, &renderQuad, angle, center, flip );
 }
 
 int LTexture::getWidth()
