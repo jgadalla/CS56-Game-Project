@@ -43,7 +43,8 @@ public:
   float GetY();
   virtual void Move(int direction);
   virtual void Move();
-  virtual void Render(long int& frame, SDL_Renderer* gRenderer, bool debug);
+  virtual void Render( SDL_Renderer* gRenderer, bool debug);
+  virtual void Render( SDL_Renderer* gRenderer);
 };
 
 

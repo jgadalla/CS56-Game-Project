@@ -8,11 +8,24 @@ and may not be redistributed without written permission.*/
 #include <string>
 #include <iostream>
 #include "Button.hpp"
-#include "LTexture.hpp"
+#include "Unit.hpp"
+#include "Queue.hpp"
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 792;
 const int SCREEN_HEIGHT = 469;
+
+//road intersection locations
+ const int XMID = SCREEN_WIDTH/2;
+ const int YMID = SCREEN_HEIGHT/2;
+ const int XMAX = SCREEN_WIDTH;
+ const int YMAX = SCREEN_HEIGHT;
+
+ //direction locations clockwise 
+ int north = 0;
+ int east = 1;
+ int west = 2;
+ int south = 3;
 
 //Starts up SDL and creates window
 bool init();
@@ -23,27 +36,15 @@ bool loadMedia();
 //Frees media and shuts down SDL
 void close();
 
-//Loads individual image
-SDL_Surface *loadSurface(std::string path);
-
 //The window we'll be rendering to
 SDL_Window *gWindow = NULL;
 
-//The surface contained by the window
-//SDL_Surface* gScreenSurface = NULL;
-
-//Current displayed PNG image
-// SDL_Surface* gStartSurface = NULL;
-// SDL_Surface* gGameSurface = NULL;
-
-//Current renderer for shapes
 SDL_Renderer *gRenderer = NULL;
 
 //Scene textures
 LTexture startTexture;
 LTexture gameTexture;
-
-
+LTexture carTexture;
 
 int check_click_in_rect(int x, int y, SDL_Rect *rect)
 {
@@ -123,17 +124,24 @@ bool loadMedia()
 
 	//Load PNG surface into textures
 
-	if (!startTexture.loadFromFile("PNGs/Start-Screen.png", gRenderer))
+	if (!startTexture.loadFromFile("Images/Start-Screen.png", gRenderer))
 	{
 		printf("Failed to load Foo' texture image!\n");
 		success = false;
 	}
 
-	if (!gameTexture.loadFromFile("PNGs/Game-Screen.png", gRenderer))
+	if (!gameTexture.loadFromFile("Images/roadtile.png", gRenderer))
 	{
 		printf("Failed to load background texture image!\n");
 		success = false;
 	}
+
+	if (!carTexture.loadFromFile("Images/red.png", gRenderer))
+	{
+		printf("Failed to load background texture image!\n");
+		success = false;
+	}
+
 	return success;
 }
 
@@ -153,34 +161,7 @@ void close()
 	IMG_Quit();
 	SDL_Quit();
 }
-// ------- Done withing the texture class --------
-// SDL_Surface* loadSurface( std::string path )
-// {
-// 	//The final optimized image
-// 	SDL_Surface* optimizedSurface = NULL;
 
-// 	//Load image at specified path
-// 	SDL_Surface* loadedSurface = IMG_Load( path.c_str() );
-// 	if( loadedSurface == NULL )
-// 	{
-// 		printf( "Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError() );
-// 	}
-// 	else
-// 	{
-// 		//Convert surface to screen format
-// 		optimizedSurface = SDL_ConvertSurface( loadedSurface, gScreenSurface->format, 0 );
-// 		if( optimizedSurface == NULL )
-// 		{
-// 			printf( "Unable to optimize image %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
-// 		}
-
-// 		//Get rid of old loaded surface
-// 		SDL_FreeSurface( loadedSurface );
-// 	}
-
-// 	return optimizedSurface;
-// }
-//--------------
 
 int main(int argc, char *args[])
 {
@@ -202,16 +183,24 @@ int main(int argc, char *args[])
 			bool quit = false;
 			bool start_screen = true;
 
-			Button* start_button = new Button(286, 132);
+			long int frame = 0;
 
+			Button *start_button = new Button(286, 132);
+			Queue southList;
+			Queue northList;
+			Queue eastList;
+			Queue westList;
 			//Event handler
 			SDL_Event e;
 
 			//While application is running
 			while (!quit)
 			{
-				start_button->render(gRenderer);
-
+				if (frame%240 == 0){
+					Unit* southCar = new Unit(&carTexture, (float)SCREEN_WIDTH/2 - 30, -50);
+					southList.Enqueue(southCar);
+				}
+	
 				//Handle events on queue
 				while (SDL_PollEvent(&e) != 0)
 				{
@@ -221,7 +210,7 @@ int main(int argc, char *args[])
 						quit = true;
 					}
 
-					if (e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP)
+					if (e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP || e.type == SDL_KEYDOWN)
 					{
 						int x, y;
 						SDL_GetMouseState(&x, &y);
@@ -231,12 +220,12 @@ int main(int argc, char *args[])
 							start_screen = false;
 						}
 
-					}
+						const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
 
-					const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
-
-					if (currentKeyStates[SDLK_ESCAPE]){
-						quit = true;
+						if (currentKeyStates[SDLK_ESCAPE])
+						{
+							quit = true;
+						}
 					}
 				}
 
@@ -247,19 +236,23 @@ int main(int argc, char *args[])
 				if (start_screen)
 				{
 					// SDL_BlitSurface( gStartSurface, NULL, gScreenSurface, NULL );
-					startTexture.render(0, 0, startTexture.getTexRect(0,0), 0.0, NULL, SDL_FLIP_NONE, gRenderer);
+					startTexture.render(0, 0, startTexture.getTexRect(0, 0), 0.0, NULL, SDL_FLIP_NONE, gRenderer);
+					start_button->render(gRenderer);
 				}
-				else
+				if(!start_screen)
 				{
 					// SDL_BlitSurface( gGameSurface, NULL, gScreenSurface, NULL );
-					gameTexture.render(0, 0, gameTexture.getTexRect(0,0), 0.0, NULL, SDL_FLIP_NONE, gRenderer);
+					gameTexture.render(0, 0, gameTexture.getTexRect(0, 0), 0.0, NULL, SDL_FLIP_NONE, gRenderer);
+					southList.Render(gRenderer);
+					southList.Move();
 				}
 				//Update the surface
 				//SDL_UpdateWindowSurface( gWindow );
 				SDL_RenderPresent(gRenderer);
+
+				++frame;
 			}
 			delete start_button;
-			start_button = NULL;
 		}
 	}
 

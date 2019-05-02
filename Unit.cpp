@@ -67,19 +67,25 @@ void Unit::Move(int direction)
 
 void Unit::Move()
 {
-  x = x + speedx;
-  y = y + speedy;
+  ++y;
+  if (y > 900){
+    SetAlive(false);
+  }
 }
 
-void Unit::Render(long int& frame, SDL_Renderer* gRenderer, bool debug)
+void Unit::Render(SDL_Renderer* gRenderer, bool debug)
 {
-  unitTexture->render( x - width/2, y - height/2, unitTexture->getTexRect(x,y), 0.0, NULL, SDL_FLIP_NONE, gRenderer );
+  unitTexture->render( x, y, unitTexture->getTexRect(x,y), 0.0, NULL, SDL_FLIP_NONE, gRenderer );
   if(debug == true)
     {
       SDL_Rect rect = { x - width/2, y - height/2, width, height };
       SDL_SetRenderDrawColor( gRenderer, 0xFF, 0x00, 0x00, 0xFF );
       SDL_RenderDrawRect( gRenderer, &rect );
     }
+}
+
+void Unit::Render(SDL_Renderer* gRenderer){
+  unitTexture->render(x,y,gRenderer);
 }
 
 int Unit::GetWidth()

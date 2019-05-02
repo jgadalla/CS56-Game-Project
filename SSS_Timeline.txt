@@ -46,7 +46,26 @@ Sedan.hpp
 
 Week 3: April 28th - May 4th
 
-TBD
+Deadlines:
+April 28th: Finish our third sprint
+
+April 29th: Progress video 2 due
+
+May 2nd: Finish 4th sprint
+
+Goals:
+
+1. We will finish our third sprint this week, which will have multiple units moving accross the screen
+
+2. Begin finalizing design details of cars, trucks, and semis, also bikes and power ups
+
+3. Fine-tuning our code, handling issues of memory
+
+Relevant Files:
+
+Queue.cpp
+PowerUp.cpp
+Bike.cpp
 
 Week 4: May 5th - 8th
 

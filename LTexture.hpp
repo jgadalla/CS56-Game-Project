@@ -20,8 +20,8 @@ class LTexture
 
 	//Renders texture at given point
 	//void render(int x, int y, SDL_Renderer* renderer);
-    void render(int x, int y, SDL_Rect* clip , double angle, SDL_Point* center, SDL_RendererFlip flip, SDL_Renderer* gRenderer);
-
+  void render(int x, int y, SDL_Rect* clip , double angle, SDL_Point* center, SDL_RendererFlip flip, SDL_Renderer* gRenderer);
+	void render(int x, int y, SDL_Renderer* gRenderer);
 	//Gets image dimensions
 	int getWidth();
 	int getHeight();
