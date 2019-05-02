@@ -29,6 +29,7 @@ Unit::~Unit()
 void Unit::SetAlive(bool alive)
 {
   this->alive = alive;
+  // should call descustrocutor
 }
 
 bool Unit::GetAlive()
@@ -36,8 +37,11 @@ bool Unit::GetAlive()
   return alive;
 }
 
+
 void Unit::Move(int direction)
 {
+
+if(allowMove){
 
   if(direction==LEFT)
     {
@@ -62,6 +66,32 @@ void Unit::Move(int direction)
       speedy = 5;
       y+=speedy;
     }
+
+  }
+}
+
+void allowsMove(string direction){
+  if(direction==LEFT)
+    {
+      if(x == XMID and y == YMID) allowsMove_ = false;
+    }
+
+  else if(direction==RIGHT)
+    {
+      if(x == XMID and y == YMID) allowsMove_ = false;
+    }
+
+  else if(direction==UP)
+    {
+      if(x == XMID  and y == YMID) allowsMove_ = false;
+    }
+
+  else
+    {
+      if(x == XMID and y == YMID) allowsMove_ = false;
+    }
+
+    allowMove_ = true;
 
 }
 

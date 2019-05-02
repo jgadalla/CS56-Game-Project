@@ -10,16 +10,17 @@ and may not be redistributed without written permission.*/
 #include "Button.hpp"
 #include "Unit.hpp"
 #include "Queue.hpp"
+#include "finalConst.hpp"
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 792;
 const int SCREEN_HEIGHT = 469;
 
 //road intersection locations
- const int XMID = SCREEN_WIDTH/2;
- const int YMID = SCREEN_HEIGHT/2;
- const int XMAX = SCREEN_WIDTH;
- const int YMAX = SCREEN_HEIGHT;
+const int XMID = SCREEN_WIDTH/2;
+const int YMID = SCREEN_HEIGHT/2;
+const int XMAX = SCREEN_WIDTH;
+const int YMAX = SCREEN_HEIGHT;
 
  //direction locations clockwise 
  int north = 0;
@@ -46,6 +47,7 @@ LTexture startTexture;
 LTexture gameTexture;
 LTexture carTexture;
 
+
 int check_click_in_rect(int x, int y, SDL_Rect *rect)
 {
 	/* Check X coordinate is within rectangle range */
@@ -62,6 +64,39 @@ int check_click_in_rect(int x, int y, SDL_Rect *rect)
 	/* X or Y is outside the rectangle */
 	return 0;
 }
+
+// generates random car color and direction based on int set
+// Unit* generateRandomCar(){
+// 	int carType = rand(0, 3);
+
+// 	if(carType == 0){
+
+// 		return new Unit(LTexture* image, float x, float y);
+// 	}
+// 	else if(carType == 1){
+// 		return new Unit(LTexture* image, float x, float y);
+// 	}
+// 	else if(carType == 2){
+// 		return new Unit(LTexture* image, float x, float y);
+// 	}
+// 	else{
+// 		return new Unit(LTexture* image, float x, float y);
+// 	}
+
+// }
+
+Unit* generateRandomCar(){
+
+}
+
+bool checkCollision(){
+
+
+
+}
+// to be implemented in future
+
+
 
 bool init()
 {
@@ -186,10 +221,11 @@ int main(int argc, char *args[])
 			long int frame = 0;
 
 			Button *start_button = new Button(286, 132);
-			Queue southList;
-			Queue northList;
-			Queue eastList;
-			Queue westList;
+
+
+	 
+
+
 			//Event handler
 			SDL_Event e;
 
@@ -197,7 +233,10 @@ int main(int argc, char *args[])
 			while (!quit)
 			{
 				if (frame%240 == 0){
-					Unit* southCar = new Unit(&carTexture, (float)SCREEN_WIDTH/2 - 30, -50);
+					Unit* southCar = generateRandomCar();
+
+
+					new Unit(&carTexture, (float)SCREEN_WIDTH/2 - 30, -50);
 					southList.Enqueue(southCar);
 				}
 	
@@ -244,7 +283,14 @@ int main(int argc, char *args[])
 					// SDL_BlitSurface( gGameSurface, NULL, gScreenSurface, NULL );
 					gameTexture.render(0, 0, gameTexture.getTexRect(0, 0), 0.0, NULL, SDL_FLIP_NONE, gRenderer);
 					southList.Render(gRenderer);
+					southList.allowMove();
 					southList.Move();
+				}
+
+
+				if(checkCollision()){
+
+
 				}
 				//Update the surface
 				//SDL_UpdateWindowSurface( gWindow );
