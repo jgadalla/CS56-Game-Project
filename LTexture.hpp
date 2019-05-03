@@ -1,11 +1,7 @@
 #pragma once
-#ifdef __APPLE__
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
-#else
-#include <SDL.h>
-#include <SDL_image.h>
-#endif
+#include <stdio.h>
 #include <cstdio>
 #include <iostream>
 
@@ -17,28 +13,23 @@ private:
   int width;
   int height;
 public:
-  LTexture();
-  ~LTexture();
+  //constructor and destructor
+  LTexture();   
+  ~LTexture(); 
+  
+  //Load surface to turn into texture
+  bool LoadFromFile( std::string path, SDL_Renderer* gRenderer );  
 
-  bool LoadFromFile( std::string path, SDL_Renderer* gRenderer );
+  //Deallocates texture
+  void Free();    
 
-  void Free();    //Deallocates texture
-
-  // //Set color modulation
-  // void SetColor( Uint8 red, Uint8 green, Uint8 blue );
-
-  // //Set blending
-  // void SetBlendMode( SDL_BlendMode blending );
-
-  // //Set alpha modulation
-  // void SetAlpha( Uint8 alpha );
-
+  //render texture 
   void Render(int x, int y, SDL_Renderer* gRenderer);
 
-  void Render( int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, 
-                  SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE, 
-                            SDL_Renderer* gRenderer = NULL);
+  //render texture with direction and orientation
+  void Render(int x, int y, SDL_Renderer* gRenderer, int dir);
 
+  //Get texture Width and Height
   int GetWidth();
   int GetHeight();
 

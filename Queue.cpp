@@ -1,6 +1,7 @@
 #include"Queue.hpp"
 #include<iostream>
 
+
 using namespace std;
 
 Queue::Queue()
@@ -76,35 +77,85 @@ void Queue::Clean()
     }
 }
 
-void Queue::Render(long int& frame, SDL_Renderer* gRenderer, bool debug)
-{
-  Node* temp = head;
-  while(temp!=NULL)
-    {
-      temp->unit->Render(frame, gRenderer, debug);
-      temp->unit->Move();
-      temp=temp->next;
-    }
-}
 
-void Queue::Render(SDL_Renderer* gRenderer){
-    Node* temp = head;
+//render w
+void Queue::Render(SDL_Renderer* gRenderer) {
+  Node* temp = head;
     while (temp!=NULL)
     {
       temp->unit->Render(gRenderer);
-      temp->unit->Move();
       temp=temp->next;
     }
     
-    
 }
 
-void Queue::Move()
+void Queue::Move(bool n_stop, bool e_stop, bool s_stop, bool w_stop)
 {
   Node* temp = head;
   while(temp!=NULL)
     {
-      temp->unit->Move();
+
+      float tempX = temp->unit->GetX();
+      float tempY = temp->unit->GetY();
+      int tempDir = temp->unit->GetDir();
+      Node* currentTemp = temp;
+    
+      while(currentTemp != head){
+        Node* prevCar = currentTemp->prev;
+        int prevCarDir = prevCar->unit->GetDir();
+
+        if(prevCarDir == tempDir){
+          float prevCarX = prevCar->unit->GetX();
+          float prevCarY = prevCar->unit->GetY();
+          float diff;
+        
+          switch (tempDir)
+          { 
+              //North
+            case 0:
+              diff = prevCarY - tempY;
+              if(diff < 50.0){
+                temp->unit->setP(true);
+              }else{
+                temp->unit->setP(false);
+              }
+              break;
+              //East
+            case 90:
+              diff = tempX - prevCarX;
+              if(diff < 50.0){
+                temp->unit->setP(true);
+              }else{
+                temp->unit->setP(false);
+              }
+              break;
+              //South
+            case 180:
+              diff = tempY - prevCarY;
+              if(diff < 50.0){
+                temp->unit->setP(true);
+              }else{
+                temp->unit->setP(false);
+              }
+              break;
+              //West
+            case -90:
+              diff = prevCarX - tempX;
+              if(diff < 50.0){
+                temp->unit->setP(true);
+              }else{
+                temp->unit->setP(false);
+              }
+              break;
+          }
+          break;
+        }else{
+          currentTemp = currentTemp->prev;
+        }
+        
+      }
+
+      temp->unit->Move(n_stop, e_stop, s_stop, w_stop);
       temp=temp->next;
     }
 }

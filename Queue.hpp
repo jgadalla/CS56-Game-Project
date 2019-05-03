@@ -1,22 +1,3 @@
-// #pragma once
-// #include "Node.hpp"
-
-// class Queue{
-	
-// public:
-// 	Queue();
-// 	~Queue();
-// 	void Render();
-// 	void Move();
-// 	void Enqueue();
-// 	void Dequeue();
-// 	void clean();
-// private:
-// 	Node* head_;
-// 	Node* tail_;
-
-// };
-
 #pragma once
 #include "Node.hpp"
 
@@ -28,9 +9,13 @@ class Queue
   public:
     Queue();
     ~Queue();
-    void Enqueue(Unit*);
-    void Clean();
-    void Render(long int& frame, SDL_Renderer* gRenderer, bool debug);
+    //add unit to queue
+    void Enqueue(Unit*);  
+    //remove unit of the screen 
+    void Clean();			
+
+	//render objects in the list
     void Render(SDL_Renderer* gRenderer);
-    void Move();
+	//move objects in the list
+    void Move(bool n_stop, bool e_stop, bool s_stop, bool w_stop);
 };

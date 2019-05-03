@@ -28,8 +28,7 @@ bool LTexture::LoadFromFile( std::string path , SDL_Renderer* gRenderer)
     }
   else
     {
-      // //Color key image
-      // SDL_SetColorKey( loadedSurface, SDL_TRUE, SDL_MapRGB( loadedSurface->format, 0, 0xFF, 0xFF ) );
+
       //Create texture from surface pixels
       newTexture = SDL_CreateTextureFromSurface( gRenderer, loadedSurface );
       if( newTexture == NULL )
@@ -64,24 +63,6 @@ void LTexture::Free()
     }
 }
 
-// void LTexture::SetColor( Uint8 red, Uint8 green, Uint8 blue )
-// {
-//   //Modulate texture rgb
-//   SDL_SetTextureColorMod( texture, red, green, blue );
-// }
-
-// void LTexture::SetBlendMode( SDL_BlendMode blending )
-// {
-//   //Set blending function
-//   SDL_SetTextureBlendMode( texture, blending );
-// }
-
-// void LTexture::SetAlpha( Uint8 alpha )
-// {
-//   //Modulate texture alpha
-//   SDL_SetTextureAlphaMod( texture, alpha );
-// }
-
 int LTexture::GetWidth()
 {
   return width;
@@ -99,18 +80,8 @@ void LTexture::Render( int x, int y, SDL_Renderer* gRenderer )
 	SDL_RenderCopy( gRenderer, texture, NULL, &renderQuad );
 }
 
-void LTexture::Render( int x, int y, SDL_Rect* clip , double angle, SDL_Point* center, SDL_RendererFlip flip, SDL_Renderer* gRenderer)
-{
+void LTexture::Render(int x, int y, SDL_Renderer* gRenderer, int dir){
   //Set rendering space and render to screen
   SDL_Rect renderQuad = { x, y, width, height };
-
-  //Set clip rendering dimensions
-  if( clip != NULL )
-    {
-      renderQuad.w = clip->w;
-      renderQuad.h = clip->h;
-    }
-
-  //Render to screen
-  SDL_RenderCopyEx( gRenderer, texture, clip, &renderQuad, angle, center, flip );
+  SDL_RenderCopyEx( gRenderer, texture, NULL, &renderQuad, (float) dir, NULL, SDL_FLIP_NONE);
 }
