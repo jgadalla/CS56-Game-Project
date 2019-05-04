@@ -18,7 +18,7 @@ using namespace std;
 
 enum MOTION {RIGHT, LEFT, UP, DOWN};
 
-class Unit : public finalConst
+class Unit
 {
 protected:
   bool alive;
@@ -28,12 +28,13 @@ protected:
   float speedy;
   int width;
   int height;
-  boolean allowsMove_;
+  int mDirection;
+  bool stopped;
 
   LTexture* unitTexture;
 
 public:
-  Unit(LTexture* image, float x, float y);
+  Unit(LTexture* image, float x, float y, int direction);
   Unit();
   virtual ~Unit();
   void SetAlive(bool);
@@ -42,7 +43,9 @@ public:
   int GetHeight();
   float GetX();
   float GetY();
-  bool allowsMove();
+  void Stop();
+  bool Stopped();
+  int getDirection();
   virtual void Move(int direction);
   virtual void Move();
   virtual void Render( SDL_Renderer* gRenderer, bool debug);

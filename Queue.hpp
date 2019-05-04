@@ -33,4 +33,6 @@ class Queue
     void Render(SDL_Renderer* gRenderer, bool debug);
     void Render(SDL_Renderer* gRenderer);
     void Move();
+    void checkStopped();
+    Unit* peek();
 };

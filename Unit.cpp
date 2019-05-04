@@ -1,11 +1,19 @@
 #include "Unit.hpp"
 
+const int SCREEN_WIDTH = 792;
+const int SCREEN_HEIGHT = 469;
+
+const float INTER_DOWN_Y = 147;
+const float INTER_UP_Y = 286;
+const float INTER_LEFT_X = 445;
+const float INTER_RIGHT_X = 306;
+
 Unit::Unit()
 {
 
 }
 
-Unit::Unit(LTexture* image, float x, float y)
+Unit::Unit(LTexture* image, float x, float y, int direction)
 {
   unitTexture = image;
 
@@ -15,8 +23,10 @@ Unit::Unit(LTexture* image, float x, float y)
   this->width = image->getWidth();
   this->height = image->getHeight();
 
-  speedx = 0;
-  speedy = 0;
+  mDirection = direction;
+
+  speedx = 1;
+  speedy = 1;
   alive  = true;
 }
 
@@ -37,62 +47,86 @@ bool Unit::GetAlive()
   return alive;
 }
 
+void Unit::Stop(){
+  speedx = 0;
+  speedy = 0;
+  stopped = true;
+}
+
+bool Unit::Stopped(){
+  switch (mDirection)
+  {
+    case RIGHT:
+      if(this->x == INTER_RIGHT_X){
+        Stop();
+      }
+      break;
+
+    case LEFT:
+      if(this->x == INTER_LEFT_X){
+        Stop();
+      }
+      break;
+    case UP:
+      if(this->y == INTER_UP_Y){
+        Stop();
+      }
+      break;
+    case DOWN:
+      if(this->y == INTER_DOWN_Y){
+        Stop();
+      }
+      break;
+  
+    default:
+      break;
+  }
+  return stopped;
+}
 
 void Unit::Move(int direction)
 {
 
-if(allowMove){
-
-  if(direction==LEFT)
+  if (direction == LEFT)
+  {
+    x -= speedx;
+    if (x < -50)
     {
-      speedx = -5;
-      x+=speedx;
+      SetAlive(false);
     }
+  }
 
-  if(direction==RIGHT)
+  if (direction == RIGHT)
+  {
+    x += speedx;
+    if (x > 550)
     {
-      speedx = 5;
-      x+=speedx;
+      SetAlive(false);
     }
+  }
 
-  if(direction==UP)
+  if (direction == UP)
+  {
+    y -= speedx;
+    if (y < -50)
     {
-      speedy = -5;
-      y+=speedy;
+      SetAlive(false);
     }
+  }
 
-  if(direction==DOWN)
+  if (direction == DOWN)
+  {
+    y += speedy;
+    if (y > 900)
     {
-      speedy = 5;
-      y+=speedy;
+      SetAlive(false);
     }
-
   }
 }
 
-void allowsMove(string direction){
-  if(direction==LEFT)
-    {
-      if(x == XMID and y == YMID) allowsMove_ = false;
-    }
 
-  else if(direction==RIGHT)
-    {
-      if(x == XMID and y == YMID) allowsMove_ = false;
-    }
-
-  else if(direction==UP)
-    {
-      if(x == XMID  and y == YMID) allowsMove_ = false;
-    }
-
-  else
-    {
-      if(x == XMID and y == YMID) allowsMove_ = false;
-    }
-
-    allowMove_ = true;
-
+int Unit::getDirection(){
+  return mDirection;
 }
 
 void Unit::Move()
