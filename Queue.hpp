@@ -6,6 +6,7 @@ class Queue
   private:
     Node* head;
     Node* tail;
+    bool collision;
   public:
     Queue();
     ~Queue();
@@ -18,4 +19,7 @@ class Queue
     void Render(SDL_Renderer* gRenderer);
 	//move objects in the list
     void Move(bool n_stop, bool e_stop, bool s_stop, bool w_stop);
+
+    //did collision happen
+    bool getCol();
 };

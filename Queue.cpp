@@ -1,5 +1,7 @@
+#include <SDL2/SDL.h>
 #include"Queue.hpp"
 #include<iostream>
+
 
 
 using namespace std;
@@ -8,6 +10,7 @@ Queue::Queue()
 {
   head = NULL;
   tail = NULL;
+  collision = false;
 }
 
 Queue::~Queue()
@@ -18,6 +21,10 @@ Queue::~Queue()
       head = head->next;
       delete temp;
     }
+}
+
+bool Queue::getCol(){
+  return collision;
 }
 
 void Queue::Enqueue(Unit* unit)
@@ -100,15 +107,19 @@ void Queue::Move(bool n_stop, bool e_stop, bool s_stop, bool w_stop)
       int tempDir = temp->unit->GetDir();
       Node* currentTemp = temp;
     
+      
       while(currentTemp != head){
         Node* prevCar = currentTemp->prev;
         int prevCarDir = prevCar->unit->GetDir();
 
-        if(prevCarDir == tempDir){
-          float prevCarX = prevCar->unit->GetX();
-          float prevCarY = prevCar->unit->GetY();
-          float diff;
+        float prevCarX = prevCar->unit->GetX();
+        float prevCarY = prevCar->unit->GetY();
+        float diff = 0.0;
         
+        
+        //find if there is a car ahead (same direction)
+        if(prevCarDir == tempDir){
+          
           switch (tempDir)
           { 
               //North
@@ -149,8 +160,29 @@ void Queue::Move(bool n_stop, bool e_stop, bool s_stop, bool w_stop)
               break;
           }
           break;
+        
+        //find if the car collided with another one of different\
+        direction
         }else{
-          currentTemp = currentTemp->prev;
+          SDL_Rect prevR;
+          SDL_Rect currR;
+          SDL_Rect colRect;
+
+          prevR.x = prevCarX;
+          prevR.y = prevCarY;
+          prevR.w = prevCar->unit->GetWidth();
+          prevR.h = prevCar->unit->GetHeight();
+
+          currR.x = tempX;
+          currR.y = tempY;
+          currR.w = currentTemp->unit->GetWidth();
+          currR.h = currentTemp->unit->GetHeight();
+
+          if(SDL_IntersectRect(&prevR, &currR, &colRect)){
+            std::cout << "cars collided\n";
+            collision = true;
+          }
+          currentTemp = prevCar;
         }
         
       }

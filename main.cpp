@@ -1,6 +1,8 @@
  #include <SDL2/SDL.h>
  #include <SDL2_image/SDL_image.h>
  #include <stdio.h>
+ #include <chrono>
+ #include <thread>
  #include <cstdio>
  #include <cstdlib>
  #include <ctime>
@@ -12,14 +14,8 @@
 
 
  //Pre defined screen width and height
- const int SCREEN_WIDTH = 792;
- const int SCREEN_HEIGHT = 468;
-
- //road intersection locations
- const int XMID = SCREEN_WIDTH/2;
- const int YMID = SCREEN_HEIGHT/2;
- const int XMAX = SCREEN_WIDTH;
- const int YMAX = SCREEN_HEIGHT;
+ const int SCREEN_WIDTH = 1080;
+ const int SCREEN_HEIGHT = 640;
 
 //booleans for stopping cars
  bool n_stop = false;
@@ -39,6 +35,7 @@
  //screen textures 
  LTexture startTexture;
  LTexture gameTexture;
+ LTexture gameOver;
  LTexture carTexture_B;
  LTexture carTexture_Y;
  LTexture carTexture_R;
@@ -65,6 +62,9 @@
 
  int main( int argc, char* args[] )
  {
+
+   using namespace std::this_thread;
+   using  namespace std::chrono;
    //Start up SDL and create window
    if( !init() )
      {
@@ -79,7 +79,7 @@
        else{
 
        //Main loop flag
-	   bool start_screen = true;
+	     bool start_screen = true;
        bool quit = false;      
 
 	   //Event handler	
@@ -97,13 +97,22 @@
 
         //queue for cars from different directions
        Queue objectList;  
-       Queue objectListS;
-       Queue objectListE;
-       Queue objectListW;
-
-       //Unit* plane = new Unit(&carTexture, 0, (float)SCREEN_HEIGHT/2);
+    
        Unit* car = NULL;
-       //Unit* bullet = NULL;
+
+       //start and quit button
+          SDL_Rect* start_button = new SDL_Rect();
+          start_button->x = 360;
+          start_button->y = 200;
+          start_button->w = 360;
+          start_button->h = 80;
+
+          SDL_Rect* quit_button = new SDL_Rect();
+          quit_button->x = 360;
+          quit_button->y = 475;
+          quit_button->w = 360;
+          quit_button->h = 80;
+
 
 	   //While application is running
        while( !quit )                          
@@ -137,16 +146,6 @@
 
            objectList.Enqueue(car);
       }
-
-
-          // this code does not show a button on the screen
-          // change needed here
-          SDL_Rect* start_button = new SDL_Rect();
-          start_button->x = 286;
-          start_button->y = 132;
-          start_button->w = 208;
-          start_button->h = 57;
-          SDL_RenderDrawRect(gRenderer, start_button);
 
 		   //Handle events on queue
            while( SDL_PollEvent( &e ) != 0 )   
@@ -182,10 +181,14 @@
 
          if (e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP){
 					int x, y;
+          //std::cout << x << " " << y << std::endl;
 					SDL_GetMouseState(&x, &y);
 					if(e.type == SDL_MOUSEBUTTONUP && check_click_in_rect(x,y,start_button)){
 						start_screen = false;
-            
+					}
+
+          if(e.type == SDL_MOUSEBUTTONUP && check_click_in_rect(x,y,quit_button)){
+						quit = true;
 					}
 				}
 
@@ -199,6 +202,14 @@
             gameTexture.Render(0, 0, gRenderer);
             objectList.Render(gRenderer);
             objectList.Move(n_stop, e_stop, s_stop, w_stop);
+            if(objectList.getCol()){
+              //load game over for a while and relaunch the game once again
+              gameOver.Render(0, 0, gRenderer);
+              SDL_RenderPresent( gRenderer ); 
+              sleep_for(seconds(5));
+              quit = true;
+
+            }
           }
 
 		  if(start_screen == false) {
@@ -283,7 +294,7 @@
 
    //Load  texture
 
-  if( !startTexture.LoadFromFile( "Images/Start-Screen.png", gRenderer ) )
+  if( !startTexture.LoadFromFile( "Images/start-screenF.png", gRenderer ) )
 	{
 		printf( "Failed to load Foo' texture image!\n" );
 		success = false;
@@ -313,7 +324,13 @@
 		success = false;
 	}
 	
-	if( !gameTexture.LoadFromFile( "Images/roadT.png", gRenderer ) )
+	if( !gameTexture.LoadFromFile( "Images/game-screenF.png", gRenderer ) )
+	{
+		printf( "Failed to load background texture image!\n" );
+		success = false;
+	}
+
+  if( !gameOver.LoadFromFile( "Images/game-over.png", gRenderer ) )
 	{
 		printf( "Failed to load background texture image!\n" );
 		success = false;
