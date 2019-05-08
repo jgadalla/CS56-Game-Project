@@ -69,4 +69,16 @@ Bike.cpp
 
 Week 4: May 5th - 8th
 
-TBD
+Deadlines:
+May 6th: Progress Video 3 due
+
+May 8th: Final game due at 10pm
+
+May 9th: Game demo
+
+1. Finalize our game, make it look presentable for our demo.
+
+2. Make sure that keyboard controls are working and ready to go
+
+3. Add other types of units if time permits
+

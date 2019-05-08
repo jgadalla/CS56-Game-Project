@@ -6,41 +6,43 @@ and may not be redistributed without written permission.*/
 #include <SDL2_image/SDL_image.h>
 #include <stdio.h>
 #include <string>
+#include <cstdio>
+#include <ctime>
+#include <cstdlib>
+
 #include <iostream>
 #include "Button.hpp"
 #include "Unit.hpp"
 #include "Queue.hpp"
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 792;
-const int SCREEN_HEIGHT = 469;
+const int SCREEN_WIDTH = 1080;
+const int SCREEN_HEIGHT = 640;
 
 //road intersection locations
- const int XMID = SCREEN_WIDTH/2;
- const int YMID = SCREEN_HEIGHT/2;
- const int XMAX = SCREEN_WIDTH;
- const int YMAX = SCREEN_HEIGHT;
+const int XMID = SCREEN_WIDTH / 2;
+const int YMID = SCREEN_HEIGHT / 2;
+const int XMAX = SCREEN_WIDTH;
+const int YMAX = SCREEN_HEIGHT;
 
 //Car start locations
-const float DOWN_START_X = (float)SCREEN_WIDTH/2 - 30;
+const float DOWN_START_X = (float)SCREEN_WIDTH / 2 - 30;
 const float DOWN_START_Y = -50;
 
-
-const float UP_START_X = (float)SCREEN_WIDTH/2 + 15;
+const float UP_START_X = (float)SCREEN_WIDTH / 2 + 15;
 const float UP_START_Y = SCREEN_HEIGHT + 50;
 
-const float LEFT_START_X = SCREEN_WIDTH +50;
-const float LEFT_START_Y = (float)SCREEN_HEIGHT/2 -30;
+const float LEFT_START_X = SCREEN_WIDTH + 50;
+const float LEFT_START_Y = (float)SCREEN_HEIGHT / 2 - 30;
 
 const float RIGHT_START_X = -50;
-const float RIGHT_START_Y = (float)SCREEN_HEIGHT/2 + 15;
+const float RIGHT_START_Y = (float)SCREEN_HEIGHT / 2 + 15;
 
-
- //direction locations clockwise 
- int east = 0;
- int west = 1;
- int north = 2;
- int south = 3;
+//direction locations clockwise
+int east = 0;
+int west = 1;
+int north = 2;
+int south = 3;
 
 //Starts up SDL and creates window
 bool init();
@@ -59,10 +61,10 @@ SDL_Renderer *gRenderer = NULL;
 //Scene textures
 LTexture startTexture;
 LTexture gameTexture;
-LTexture cardownTexture;
-LTexture carupTexture;
-LTexture carleftTexture;
-LTexture carrightTexture;
+LTexture redCarTexture;
+LTexture blackCarTexture;
+LTexture blueCarTexture;
+LTexture yellowCarTexture;
 
 int check_click_in_rect(int x, int y, SDL_Rect *rect)
 {
@@ -142,41 +144,40 @@ bool loadMedia()
 
 	//Load PNG surface into textures
 
-	if (!startTexture.loadFromFile("Images/Start-Screen.png", gRenderer))
+	if (!startTexture.loadFromFile("Images/Start-ScreenF.png", gRenderer))
 	{
 		printf("Failed to load Foo' texture image!\n");
 		success = false;
 	}
 
-	if (!gameTexture.loadFromFile("Images/Game-Screen-Final.png", gRenderer))
+	if (!gameTexture.loadFromFile("Images/Game-ScreenF.png", gRenderer))
 	{
 		printf("Failed to load background texture image!\n");
 		success = false;
 	}
 
-	if (!cardownTexture.loadFromFile("Images/red-south.png", gRenderer))
+	if (!redCarTexture.loadFromFile("Images/red.png", gRenderer))
 	{
 		printf("Failed to load background texture image!\n");
 		success = false;
 	}
 
-	if (!carupTexture.loadFromFile("Images/red-north.png", gRenderer))
+	if (!blueCarTexture.loadFromFile("Images/blue.png", gRenderer))
 	{
 		printf("Failed to load background texture image!\n");
 		success = false;
 	}
 
-	if (!carleftTexture.loadFromFile("Images/red-west.png", gRenderer))
+	if (!blackCarTexture.loadFromFile("Images/black.png", gRenderer))
 	{
 		printf("Failed to load background texture image!\n");
 		success = false;
 	}
-	if (!carrightTexture.loadFromFile("Images/red-east.png", gRenderer))
+	if (!yellowCarTexture.loadFromFile("Images/yellow.png", gRenderer))
 	{
 		printf("Failed to load background texture image!\n");
 		success = false;
 	}
-
 
 	return success;
 }
@@ -186,6 +187,10 @@ void close()
 	//Free loaded image
 	gameTexture.free();
 	startTexture.free();
+	redCarTexture.free();
+	blueCarTexture.free();
+	blackCarTexture.free();
+	yellowCarTexture.free();
 
 	//Destroy window
 	SDL_DestroyRenderer(gRenderer);
@@ -198,6 +203,21 @@ void close()
 	SDL_Quit();
 }
 
+LTexture *getRandTexture()
+{
+	switch (rand() % 4)
+	{
+	case 0:
+		return &blackCarTexture;
+	case 1:
+		return &blueCarTexture;
+	case 2:
+		return &yellowCarTexture;
+	case 3:
+		return &redCarTexture;
+	}
+	return NULL;
+}
 
 int main(int argc, char *args[])
 {
@@ -221,7 +241,8 @@ int main(int argc, char *args[])
 
 			long int frame = 0;
 
-			Button *start_button = new Button(288, 133);
+			Button *start_button = new Button(360, 200);
+			Button *quit_button = new Button(360, 475);
 			Queue unitList;
 			//Event handler
 			SDL_Event e;
@@ -229,17 +250,31 @@ int main(int argc, char *args[])
 			//While application is running
 			while (!quit)
 			{
-				if (frame%240 == 0){
-					Unit* southCar = new Unit(&cardownTexture, DOWN_START_X, DOWN_START_Y, south);
-					unitList.Enqueue(southCar);
-					Unit* westCar = new Unit(&carleftTexture, LEFT_START_X, LEFT_START_Y, west);
-					unitList.Enqueue(westCar);
-					Unit* northCar = new Unit(&carupTexture, UP_START_X, UP_START_Y, north);
-					unitList.Enqueue(northCar);
-					Unit* eastCar = new Unit(&carrightTexture, RIGHT_START_X, RIGHT_START_Y, east);
-					unitList.Enqueue(eastCar);
+				if (frame % 120 == 0)
+				{
+					Unit *tempCar = NULL;
+					LTexture *currTex = getRandTexture();
+					switch (rand() % 4)
+					{
+					case 0:
+						tempCar = new Unit(currTex, DOWN_START_X, DOWN_START_Y, south);
+						unitList.Enqueue(tempCar);
+						break;
+					case 1:
+						tempCar = new Unit(currTex, LEFT_START_X, LEFT_START_Y, west);
+						unitList.Enqueue(tempCar);
+						break;
+					case 2:
+						tempCar = new Unit(currTex, UP_START_X, UP_START_Y, north);
+						unitList.Enqueue(tempCar);
+						break;
+					case 3:
+						tempCar = new Unit(currTex, RIGHT_START_X, RIGHT_START_Y, east);
+						unitList.Enqueue(tempCar);
+						break;
+					}
 				}
-	
+
 				//Handle events on queue
 				while (SDL_PollEvent(&e) != 0)
 				{
@@ -249,21 +284,38 @@ int main(int argc, char *args[])
 						quit = true;
 					}
 
-					if (e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP || e.type == SDL_KEYDOWN)
+					if (e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP)
 					{
 						int x, y;
 						SDL_GetMouseState(&x, &y);
-						SDL_Rect currRect = start_button->getRect();
-						if (e.type == SDL_MOUSEBUTTONUP && check_click_in_rect(x, y, &currRect))
+						SDL_Rect startRect = start_button->getRect();
+						SDL_Rect quitRect = quit_button->getRect();
+						if (e.type == SDL_MOUSEBUTTONUP && check_click_in_rect(x, y, &startRect))
 						{
 							start_screen = false;
 						}
 
-						const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
-
-						if (currentKeyStates[SDLK_ESCAPE])
+						if (e.type == SDL_MOUSEBUTTONUP && check_click_in_rect(x, y, &quitRect))
 						{
 							quit = true;
+						}
+					}
+					if (e.type == SDL_KEYDOWN)
+					{
+						switch (e.key.keysym.sym)
+						{
+						case SDLK_w:
+							unitList.Go(north);
+						case SDLK_s:
+							unitList.Go(south);
+						case SDLK_a:
+							unitList.Go(west);
+						case SDLK_d:
+							unitList.Go(east);
+						case SDLK_ESCAPE:
+							quit = true;
+						default:
+							break;
 						}
 					}
 				}
@@ -277,14 +329,16 @@ int main(int argc, char *args[])
 					// SDL_BlitSurface( gStartSurface, NULL, gScreenSurface, NULL );
 					startTexture.render(0, 0, startTexture.getTexRect(0, 0), 0.0, NULL, SDL_FLIP_NONE, gRenderer);
 					start_button->render(gRenderer);
+					quit_button->render(gRenderer);
 				}
-				if(!start_screen)
+				if (!start_screen)
 				{
 					// SDL_BlitSurface( gGameSurface, NULL, gScreenSurface, NULL );
 					gameTexture.render(0, 0, gameTexture.getTexRect(0, 0), 0.0, NULL, SDL_FLIP_NONE, gRenderer);
 					unitList.checkStopped();
 					unitList.Render(gRenderer);
 					unitList.Move();
+					unitList.Clean();
 				}
 				//Update the surface
 				//SDL_UpdateWindowSurface( gWindow );
@@ -293,6 +347,7 @@ int main(int argc, char *args[])
 				++frame;
 			}
 			delete start_button;
+			delete quit_button;
 		}
 	}
 

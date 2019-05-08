@@ -45,6 +45,8 @@ public:
   float GetY();
   void Stop();
   bool Stopped();
+  void Go();
+  bool getStopped();
   int getDirection();
   virtual void Move(int direction);
   virtual void Move();

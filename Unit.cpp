@@ -1,12 +1,12 @@
 #include "Unit.hpp"
 
-const int SCREEN_WIDTH = 792;
-const int SCREEN_HEIGHT = 469;
+const int SCREEN_WIDTH = 1080;
+const int SCREEN_HEIGHT = 640;
 
-const float INTER_DOWN_Y = 147;
-const float INTER_UP_Y = 286;
-const float INTER_LEFT_X = 445;
-const float INTER_RIGHT_X = 306;
+const float INTER_DOWN_Y = 210;
+const float INTER_UP_Y = 390;
+const float INTER_LEFT_X = 620;
+const float INTER_RIGHT_X = 440;
 
 Unit::Unit()
 {
@@ -25,8 +25,8 @@ Unit::Unit(LTexture* image, float x, float y, int direction)
 
   mDirection = direction;
 
-  speedx = 1;
-  speedy = 1;
+  speedx = 5;
+  speedy = 5;
   alive  = true;
 }
 
@@ -35,6 +35,8 @@ Unit::~Unit()
 {
   unitTexture = NULL;
 }
+
+
 
 void Unit::SetAlive(bool alive)
 {
@@ -82,6 +84,15 @@ bool Unit::Stopped(){
       break;
   }
   return stopped;
+}
+
+bool Unit::getStopped(){
+  return stopped;
+}
+
+void Unit::Go(){
+  speedx = 10;
+  speedy = 10;
 }
 
 void Unit::Move(int direction)
@@ -149,7 +160,7 @@ void Unit::Render(SDL_Renderer* gRenderer, bool debug)
 }
 
 void Unit::Render(SDL_Renderer* gRenderer){
-  unitTexture->render(x,y,gRenderer);
+  unitTexture->render(x,y,gRenderer, mDirection);
 }
 
 int Unit::GetWidth()

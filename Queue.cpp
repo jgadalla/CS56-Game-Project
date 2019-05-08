@@ -53,6 +53,17 @@ void Queue::checkStopped()
   }
 }
 
+void Queue::Go(int dir){
+  Node* temp = head;
+  while (temp != NULL){
+    if(temp->unit->getDirection() == dir && temp->unit->getStopped()){
+      temp->unit->Go();
+      break;
+    }
+    temp = temp->next;
+  }
+}
+
 void Queue::Clean()
 {
   Node *temp = head;
@@ -107,7 +118,6 @@ void Queue::Render(SDL_Renderer *gRenderer)
   while (temp != NULL)
   {
     temp->unit->Render(gRenderer);
-    //temp->unit->Move(direction);
     temp = temp->next;
   }
 }
