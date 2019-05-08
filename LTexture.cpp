@@ -6,6 +6,7 @@ LTexture::LTexture()
 	mTexture = NULL;
 	mWidth = 0;
 	mHeight = 0;
+	angle = 0.0;
 }
 
 LTexture::~LTexture()
@@ -75,7 +76,7 @@ SDL_Rect *LTexture::getTexRect(int x, int y)
 	return rect;
 }
 
-void LTexture::render(int x, int y, SDL_Rect *clip, double angle, SDL_Point *center, SDL_RendererFlip flip, SDL_Renderer *gRenderer)
+void LTexture::render(int x, int y, SDL_Rect *clip, SDL_Point *center, SDL_RendererFlip flip, SDL_Renderer *gRenderer)
 {
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = {x, y, mWidth, mHeight};
@@ -106,4 +107,8 @@ int LTexture::getWidth()
 int LTexture::getHeight()
 {
 	return mHeight;
+}
+
+void LTexture::setAngle(int degrees){
+	angle = degrees;
 }

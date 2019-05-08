@@ -7,20 +7,13 @@ and may not be redistributed without written permission.*/
 #include <stdio.h>
 #include <string>
 #include <iostream>
+#include <cstdlib>
 #include "Button.hpp"
 #include "Unit.hpp"
 #include "Queue.hpp"
+#include "LTexture.hpp"
 #include "finalConst.hpp"
-
-//Screen dimension constants
-const int SCREEN_WIDTH = 792;
-const int SCREEN_HEIGHT = 469;
-
-//road intersection locations
-const int XMID = SCREEN_WIDTH/2;
-const int YMID = SCREEN_HEIGHT/2;
-const int XMAX = SCREEN_WIDTH;
-const int YMAX = SCREEN_HEIGHT;
+#include "crashDetector.hpp"
 
  //direction locations clockwise 
  int north = 0;
@@ -45,7 +38,11 @@ SDL_Renderer *gRenderer = NULL;
 //Scene textures
 LTexture startTexture;
 LTexture gameTexture;
-LTexture carTexture;
+LTexture redTexture;
+LTexture yellowTexture;
+LTexture blueTexture;
+LTexture blackTexture;
+
 
 
 int check_click_in_rect(int x, int y, SDL_Rect *rect)
@@ -66,37 +63,43 @@ int check_click_in_rect(int x, int y, SDL_Rect *rect)
 }
 
 // generates random car color and direction based on int set
-// Unit* generateRandomCar(){
-// 	int carType = rand(0, 3);
-
-// 	if(carType == 0){
-
-// 		return new Unit(LTexture* image, float x, float y);
-// 	}
-// 	else if(carType == 1){
-// 		return new Unit(LTexture* image, float x, float y);
-// 	}
-// 	else if(carType == 2){
-// 		return new Unit(LTexture* image, float x, float y);
-// 	}
-// 	else{
-// 		return new Unit(LTexture* image, float x, float y);
-// 	}
-
-// }
-
 Unit* generateRandomCar(){
+LTexture* texture;
+int direction = rand() % 100;
+int textInt = rand() % 4;
+switch (textInt) {
+ case 0:
+ 	texture = &blackTexture;
+ 	break;
+
+ case 1:
+ 	texture = &yellowTexture;
+ 	break;
+
+ case 2:
+ 	texture = &blueTexture;
+ 	break;
+
+ default:
+ 	texture = &redTexture;
+ }
+
+if(direction < 25){
+	return new Unit(texture, NORTH);
+}
+else if(direction < 50){
+	return new Unit(texture, EAST);
+}
+else if(direction < 75){
+	return new Unit(texture, WEST);
+}
+else{
+	return new Unit(texture, SOUTH);
+}
 
 }
 
-bool checkCollision(){
-
-
-
-}
 // to be implemented in future
-
-
 
 bool init()
 {
@@ -152,6 +155,13 @@ bool init()
 	return success;
 }
 
+/*
+Notes ->
+
+Collsion figure out 
+*/
+
+
 bool loadMedia()
 {
 	//Loading success flag
@@ -171,7 +181,25 @@ bool loadMedia()
 		success = false;
 	}
 
-	if (!carTexture.loadFromFile("Images/red.png", gRenderer))
+	if (!redTexture.loadFromFile("Images/red.png", gRenderer))
+	{
+		printf("Failed to load background texture image!\n");
+		success = false;
+	}
+
+	if(!blackTexture.loadFromFile("Images/black.png", gRenderer))
+	{
+		printf("Failed to load background texture image!\n");
+		success = false;
+	}
+
+	if(!yellowTexture.loadFromFile("Images/yellow.png", gRenderer))
+	{
+		printf("Failed to load background texture image!\n");
+		success = false;
+	}
+
+	if(!blueTexture.loadFromFile("Images/blue.png", gRenderer))
 	{
 		printf("Failed to load background texture image!\n");
 		success = false;
@@ -217,27 +245,41 @@ int main(int argc, char *args[])
 			//Main loop flag
 			bool quit = false;
 			bool start_screen = true;
+			bool moveOn = false;
 
 			long int frame = 0;
 
 			Button *start_button = new Button(286, 132);
 
-
-	 
-
+			Queue northList = Queue();
+			Queue eastList = Queue();
+			Queue westList = Queue();
+			Queue southList = Queue();
 
 			//Event handler
 			SDL_Event e;
 
+			crashDetector* detect = new crashDetector();
 			//While application is running
 			while (!quit)
 			{
-				if (frame%240 == 0){
-					Unit* southCar = generateRandomCar();
+				if (frame%45 == 0){
+					Unit* car = generateRandomCar();
+					detect->addUnit(car);
+					switch (car->GetDirection()){
+						case NORTH:
+							northList.Enqueue(car);
+							break;
+						case EAST:
+							eastList.Enqueue(car);
+							break;
+						case WEST:
+							westList.Enqueue(car);
+							break;
+						default:
+							southList.Enqueue(car);
+					}
 
-
-					new Unit(&carTexture, (float)SCREEN_WIDTH/2 - 30, -50);
-					southList.Enqueue(southCar);
 				}
 	
 				//Handle events on queue
@@ -251,12 +293,36 @@ int main(int argc, char *args[])
 
 					if (e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP || e.type == SDL_KEYDOWN)
 					{
+
 						int x, y;
 						SDL_GetMouseState(&x, &y);
 						SDL_Rect currRect = start_button->getRect();
 						if (e.type == SDL_MOUSEBUTTONUP && check_click_in_rect(x, y, &currRect))
 						{
 							start_screen = false;
+						}
+
+						if (!start_screen && e.type == SDL_KEYDOWN){
+
+							switch(e.key.keysym.sym){
+								case SDLK_w:
+									northList.setKey();
+									break;
+								case SDLK_a:
+									westList.setKey();
+									break;
+								case SDLK_s:
+									southList.setKey();
+									break;
+								case SDLK_d:
+									eastList.setKey();
+									break;
+								default:
+									break;
+							  	// do nothing
+							}
+
+
 						}
 
 						const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
@@ -275,23 +341,25 @@ int main(int argc, char *args[])
 				if (start_screen)
 				{
 					// SDL_BlitSurface( gStartSurface, NULL, gScreenSurface, NULL );
-					startTexture.render(0, 0, startTexture.getTexRect(0, 0), 0.0, NULL, SDL_FLIP_NONE, gRenderer);
+					startTexture.render(0, 0, startTexture.getTexRect(0, 0), NULL, SDL_FLIP_NONE, gRenderer);
 					start_button->render(gRenderer);
 				}
 				if(!start_screen)
 				{
 					// SDL_BlitSurface( gGameSurface, NULL, gScreenSurface, NULL );
-					gameTexture.render(0, 0, gameTexture.getTexRect(0, 0), 0.0, NULL, SDL_FLIP_NONE, gRenderer);
+					gameTexture.render(0, 0, gameTexture.getTexRect(0, 0),  NULL, SDL_FLIP_NONE, gRenderer);
+					northList.Render(gRenderer);
+					eastList.Render(gRenderer);
+					westList.Render(gRenderer);
 					southList.Render(gRenderer);
-					southList.allowMove();
+					northList.Move();
+					eastList.Move();
+					westList.Move();
 					southList.Move();
+
+					detect->collision();
 				}
 
-
-				if(checkCollision()){
-
-
-				}
 				//Update the surface
 				//SDL_UpdateWindowSurface( gWindow );
 				SDL_RenderPresent(gRenderer);

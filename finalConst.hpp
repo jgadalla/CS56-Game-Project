@@ -1,4 +1,4 @@
-struct finalConst{
+#pragma once
 	//Screen dimension constants
 	const int SCREEN_WIDTH = 792;
 	const int SCREEN_HEIGHT = 469;
@@ -9,5 +9,8 @@ struct finalConst{
 	const int XMAX = SCREEN_WIDTH;
 	const int YMAX = SCREEN_HEIGHT;
 
-	
-}
+	//direction constants
+	const int NORTH = 0;
+ 	const int EAST = 1;
+ 	const int WEST = 2;
+ 	const int SOUTH = 3;

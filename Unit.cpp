@@ -5,19 +5,36 @@ Unit::Unit()
 
 }
 
-Unit::Unit(LTexture* image, float x, float y)
+Unit::Unit(LTexture* image, int direction): 
+unitTexture(image), direction_(direction), allowsMove_(true), keydown_(false), collision_(false), speedx(1), speedy(1), alive(true)
 {
-  unitTexture = image;
-
-  this->x = x;
-  this->y = y;
-
   this->width = image->getWidth();
   this->height = image->getHeight();
 
-  speedx = 0;
-  speedy = 0;
-  alive  = true;
+  switch(direction_){
+    case NORTH:
+      unitTexture->setAngle(180);
+      x = XMID + 30;
+      y = YMAX + 50;
+      break;
+    case EAST:
+      //unitTexture->setAngle(90);
+      x = -50;
+      y = YMID + 30;
+      break;
+    case WEST:
+      unitTexture->setAngle(270);
+      x = XMAX + 50;
+      y = YMID - 30;
+      break;
+    default:
+          x = XMID - 30;
+          y = -50;
+  }
+
+  this->width = unitTexture->getWidth();
+  this->height = unitTexture->getHeight();
+
 }
 
 
@@ -38,74 +55,124 @@ bool Unit::GetAlive()
 }
 
 
-void Unit::Move(int direction)
+void Unit::Move()
 {
 
-if(allowMove){
+allowsMove();
 
-  if(direction==LEFT)
+if(allowsMove_){
+
+  if(direction_== WEST)
     {
-      speedx = -5;
-      x+=speedx;
+      x -= speedx;
     }
 
-  if(direction==RIGHT)
+  if(direction_== EAST)
     {
-      speedx = 5;
-      x+=speedx;
+      x+= speedx;
     }
 
-  if(direction==UP)
+  if(direction_== NORTH)
     {
-      speedy = -5;
-      y+=speedy;
+      y-= speedy;
     }
 
-  if(direction==DOWN)
+  if(direction_== SOUTH)
     {
-      speedy = 5;
-      y+=speedy;
+      y += speedy;
     }
 
   }
-}
 
-void allowsMove(string direction){
-  if(direction==LEFT)
-    {
-      if(x == XMID and y == YMID) allowsMove_ = false;
-    }
-
-  else if(direction==RIGHT)
-    {
-      if(x == XMID and y == YMID) allowsMove_ = false;
-    }
-
-  else if(direction==UP)
-    {
-      if(x == XMID  and y == YMID) allowsMove_ = false;
-    }
-
-  else
-    {
-      if(x == XMID and y == YMID) allowsMove_ = false;
-    }
-
-    allowMove_ = true;
-
-}
-
-void Unit::Move()
-{
-  ++y;
-  if (y > 900){
+  if (y > YMAX + 200 || x > XMAX + 200){
     SetAlive(false);
   }
 }
 
+void Unit::changeSpeed(int speed){
+  if (direction_ == SOUTH || direction_ == NORTH){
+      speedy = speed;
+  }
+  else{
+      speedx = speed;
+  }
+}
+
+
+void Unit::setKey(){
+
+  if(direction_ == NORTH)
+    {
+      if(y < YMID + 80) keydown_ = true;
+    }
+
+  else if(direction_ == EAST)
+    {
+      if(x > XMID - 80) keydown_ = true;
+    }
+
+  else if(direction_ == WEST)
+    {
+      if(x < XMID + 80) keydown_ = true;
+
+    }
+
+  else 
+    {
+      if(y > YMID - 80) keydown_ = true;
+    }
+
+
+}
+
+void Unit::crashed(){
+  collision_ = true;
+}
+
+void Unit::allowsMove(){
+
+if(collision_){
+      changeSpeed(0);
+      allowsMove_ = false;
+}
+else if(!allowsMove_ and keydown_){
+      changeSpeed(5);
+      allowsMove_ = true;
+}
+else{
+
+
+  if(direction_ == NORTH)
+    {
+      if(y < YMID + 80) allowsMove_ = false;
+    }
+
+  else if(direction_ == EAST)
+    {
+      if(x > XMID - 80) allowsMove_ = false;
+    }
+
+  else if(direction_ == WEST)
+    {
+      if(x < XMID + 80) allowsMove_ = false;
+
+    }
+
+  else 
+    {
+      if(y > YMID - 80) allowsMove_ = false;
+    }
+
+  }
+}
+
+int Unit::GetDirection(){
+  return direction_;
+}
+
 void Unit::Render(SDL_Renderer* gRenderer, bool debug)
 {
-  unitTexture->render( x, y, unitTexture->getTexRect(x,y), 0.0, NULL, SDL_FLIP_NONE, gRenderer );
+  unitTexture->render( x, y, unitTexture->getTexRect(x,y), NULL, SDL_FLIP_NONE, gRenderer );
   if(debug == true)
     {
       SDL_Rect rect = { x - width/2, y - height/2, width, height };

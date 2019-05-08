@@ -99,6 +99,16 @@ void Queue::Render(SDL_Renderer* gRenderer){
     
 }
 
+void Queue::setKey()
+{
+  Node* temp = head;
+  while(temp!=NULL)
+    {
+      temp->unit->setKey();
+      temp=temp->next;
+    }
+}
+
 void Queue::Move()
 {
   Node* temp = head;
