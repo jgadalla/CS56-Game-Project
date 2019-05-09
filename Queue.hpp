@@ -9,6 +9,7 @@ class Queue
   private:
     Node* head;
     Node* tail;
+    bool collision;
 
   public:
     Queue();

@@ -3,8 +3,8 @@
 Button::Button(int x, int y){
     btnRect.x = x;
     btnRect.y = y;
-    btnRect.w = 208;
-    btnRect.h = 57;
+    btnRect.w = 360;
+    btnRect.h = 80;
 }
 
 void Button::render(SDL_Renderer* renderer){

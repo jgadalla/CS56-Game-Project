@@ -14,11 +14,10 @@ and may not be redistributed without written permission.*/
 #include "LTexture.hpp"
 #include "finalConst.hpp"
 #include "crashDetector.hpp"
-
  //direction locations clockwise 
- int north = 0;
- int east = 1;
- int west = 2;
+ int east = 0;
+ int west = 1;
+ int north = 2;
  int south = 3;
 
 //Starts up SDL and creates window
@@ -122,7 +121,7 @@ bool init()
 		}
 
 		//Create window
-		gWindow = SDL_CreateWindow("Sixth Street Scramble", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+		gWindow = SDL_CreateWindow("Sixth Street Scramble", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1080, 640, SDL_WINDOW_SHOWN);
 		if (gWindow == NULL)
 		{
 			printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
@@ -169,13 +168,13 @@ bool loadMedia()
 
 	//Load PNG surface into textures
 
-	if (!startTexture.loadFromFile("Images/Start-Screen.png", gRenderer))
+	if (!startTexture.loadFromFile("Images/start-screenF.png", gRenderer))
 	{
 		printf("Failed to load Foo' texture image!\n");
 		success = false;
 	}
 
-	if (!gameTexture.loadFromFile("Images/roadtile.png", gRenderer))
+	if (!gameTexture.loadFromFile("Images/game-screenF.png", gRenderer))
 	{
 		printf("Failed to load background texture image!\n");
 		success = false;
@@ -249,7 +248,8 @@ int main(int argc, char *args[])
 
 			long int frame = 0;
 
-			Button *start_button = new Button(286, 132);
+			Button *start_button = new Button(360, 200);
+			Button *quit_button = new Button(360, 475);
 
 			Queue northList = Queue();
 			Queue eastList = Queue();
@@ -296,8 +296,13 @@ int main(int argc, char *args[])
 
 						int x, y;
 						SDL_GetMouseState(&x, &y);
-						SDL_Rect currRect = start_button->getRect();
-						if (e.type == SDL_MOUSEBUTTONUP && check_click_in_rect(x, y, &currRect))
+						SDL_Rect startRect = start_button->getRect();
+						SDL_Rect quitRect = quit_button->getRect();
+						if (e.type == SDL_MOUSEBUTTONUP && check_click_in_rect(x, y, &startRect))
+						{
+							start_screen = false;
+						}
+						if (e.type == SDL_MOUSEBUTTONUP && check_click_in_rect(x, y, &quitRect))
 						{
 							start_screen = false;
 						}
@@ -343,6 +348,7 @@ int main(int argc, char *args[])
 					// SDL_BlitSurface( gStartSurface, NULL, gScreenSurface, NULL );
 					startTexture.render(0, 0, startTexture.getTexRect(0, 0), NULL, SDL_FLIP_NONE, gRenderer);
 					start_button->render(gRenderer);
+					quit_button->render(gRenderer);
 				}
 				if(!start_screen)
 				{
