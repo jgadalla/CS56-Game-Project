@@ -269,7 +269,7 @@ int main(int argc, char *args[])
 			//While application is running
 			while (!quit)
 			{
-				if (frame%45 == 0){
+				if (frame%45 == 0 && !start_screen){
 					Unit* car = generateRandomCar();
 					switch (car->GetDirection()){
 						case NORTH:
@@ -309,7 +309,7 @@ int main(int argc, char *args[])
 						}
 						if (e.type == SDL_MOUSEBUTTONUP && check_click_in_rect(x, y, &quitRect))
 						{
-							start_screen = false;
+							quit = true;
 						}
 
 						if (!start_screen && e.type == SDL_KEYDOWN){
