@@ -51,6 +51,7 @@ public:
   void setKey();
   void crashed();
   void changeSpeed(int speed);
+  SDL_Rect* getUnitRect();
   virtual void Move();
   virtual void Render( SDL_Renderer* gRenderer, bool debug);
   virtual void Render( SDL_Renderer* gRenderer);

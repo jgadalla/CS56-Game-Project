@@ -19,5 +19,7 @@ class Queue
     void Render(SDL_Renderer* gRenderer, bool debug);
     void Render(SDL_Renderer* gRenderer);
     void Move();
+    void checkCollision(Queue& other);
     void setKey();
+    bool getCol();
 };

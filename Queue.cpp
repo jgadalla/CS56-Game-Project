@@ -7,6 +7,7 @@ Queue::Queue()
 {
   head = NULL;
   tail = NULL;
+  collision = false;
 }
 
 Queue::~Queue()
@@ -95,8 +96,35 @@ void Queue::Render(SDL_Renderer* gRenderer){
       temp->unit->Move();
       temp=temp->next;
     }
-    
-    
+}
+
+void Queue::checkCollision(Queue& other){
+  Node* temp = head;
+  SDL_Rect* curr = new SDL_Rect();
+  while(temp != NULL){
+    curr = temp->unit->getUnitRect();
+    Node* temp2 = other.head;
+    SDL_Rect* curr2 = new SDL_Rect();
+    SDL_Rect colRect;
+    while(temp2 != NULL){
+      curr2 = temp2->unit->getUnitRect();
+      if (SDL_IntersectRect(curr, curr2, &colRect) && temp->unit != temp2->unit){
+        collision = true;
+        break;
+      }
+      temp2 = temp2->next;
+    }
+    if (collision){
+      break;
+    }
+    temp = temp->next;
+    delete curr2;
+  }
+  delete curr;
+}
+
+bool Queue::getCol(){
+  return collision;
 }
 
 void Queue::setKey()

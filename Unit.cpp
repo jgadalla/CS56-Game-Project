@@ -54,6 +54,9 @@ bool Unit::GetAlive()
   return alive;
 }
 
+SDL_Rect* Unit::getUnitRect(){
+  return unitTexture->getTexRect(x,y);
+}
 
 void Unit::Move()
 {
@@ -170,6 +173,7 @@ int Unit::GetDirection(){
   return direction_;
 }
 
+
 void Unit::Render(SDL_Renderer* gRenderer, bool debug)
 {
   unitTexture->render( x, y, unitTexture->getTexRect(x,y), NULL, SDL_FLIP_NONE, gRenderer );
@@ -178,7 +182,7 @@ void Unit::Render(SDL_Renderer* gRenderer, bool debug)
       SDL_Rect rect = { x - width/2, y - height/2, width, height };
       SDL_SetRenderDrawColor( gRenderer, 0xFF, 0x00, 0x00, 0xFF );
       SDL_RenderDrawRect( gRenderer, &rect );
-    }
+          }
 }
 
 void Unit::Render(SDL_Renderer* gRenderer){

@@ -362,8 +362,20 @@ int main(int argc, char *args[])
 					eastList.Move();
 					westList.Move();
 					southList.Move();
-
-					detect->collision();
+					northList.checkCollision(northList);
+					northList.checkCollision(eastList);
+					northList.checkCollision(southList);
+					northList.checkCollision(westList);
+					southList.checkCollision(southList);
+					southList.checkCollision(eastList);
+					southList.checkCollision(westList);
+					eastList.checkCollision(eastList);
+					eastList.checkCollision(westList);
+					westList.checkCollision(westList);
+					if(northList.getCol() || southList.getCol() || eastList.getCol() || westList.getCol()){
+						cout << "collision occured" << endl;
+						quit = true;
+					}
 				}
 
 				//Update the surface

@@ -30,7 +30,7 @@ class LTexture
 
 	void setAngle(int degrees);
 
-    SDL_Rect* getTexRect(int x, int y);
+  SDL_Rect* getTexRect(int x, int y);
 
   private:
 	//The actual hardware texture

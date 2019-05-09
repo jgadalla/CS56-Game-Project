@@ -66,9 +66,9 @@ void LTexture::free()
 	}
 }
 
-SDL_Rect *LTexture::getTexRect(int x, int y)
+SDL_Rect* LTexture::getTexRect(int x, int y)
 {
-	SDL_Rect *rect = new SDL_Rect();
+	SDL_Rect* rect = new SDL_Rect();
 	rect->x = x;
 	rect->y = y;
 	rect->w = mWidth;
