@@ -37,6 +37,7 @@ SDL_Renderer *gRenderer = NULL;
 //Scene textures
 LTexture startTexture;
 LTexture gameTexture;
+LTexture endTexture; 
 LTexture redTexture;
 LTexture yellowTexture;
 LTexture blueTexture;
@@ -180,6 +181,12 @@ bool loadMedia()
 		success = false;
 	}
 
+	if (!endTexture.loadFromFile("Images/game-over.png", gRenderer))
+	{
+		printf("Failed to load background texture image!\n");
+		success = false;
+	}
+
 	if (!redTexture.loadFromFile("Images/red.png", gRenderer))
 	{
 		printf("Failed to load background texture image!\n");
@@ -212,6 +219,7 @@ void close()
 	//Free loaded image
 	gameTexture.free();
 	startTexture.free();
+	endTexture.free();
 
 	//Destroy window
 	SDL_DestroyRenderer(gRenderer);
@@ -374,6 +382,9 @@ int main(int argc, char *args[])
 					westList.checkCollision(westList);
 					if(northList.getCol() || southList.getCol() || eastList.getCol() || westList.getCol()){
 						cout << "collision occured" << endl;
+						endTexture.render(0, 0, gameTexture.getTexRect(0, 0),  NULL, SDL_FLIP_NONE, gRenderer);
+						SDL_RenderPresent(gRenderer);
+						SDL_Delay(3000);
 						quit = true;
 					}
 				}
