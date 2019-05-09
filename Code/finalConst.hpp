@@ -1,7 +1,7 @@
 #pragma once
 	//Screen dimension constants
-	const int SCREEN_WIDTH = 792;
-	const int SCREEN_HEIGHT = 469;
+	const int SCREEN_WIDTH = 1080;
+	const int SCREEN_HEIGHT = 640;
 
 	//road intersection locations
 	const int XMID = SCREEN_WIDTH/2;
