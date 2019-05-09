@@ -13,7 +13,6 @@ and may not be redistributed without written permission.*/
 #include "Queue.hpp"
 #include "LTexture.hpp"
 #include "finalConst.hpp"
-#include "crashDetector.hpp"
 
  //direction locations clockwise 
  int north = 0;
@@ -259,13 +258,13 @@ int main(int argc, char *args[])
 			//Event handler
 			SDL_Event e;
 
-			crashDetector* detect = new crashDetector();
+			//crashDetector* detect = new crashDetector();
 			//While application is running
 			while (!quit)
 			{
 				if (frame%45 == 0){
 					Unit* car = generateRandomCar();
-					detect->addUnit(car);
+					//detect->addUnit(car);
 					switch (car->GetDirection()){
 						case NORTH:
 							northList.Enqueue(car);
@@ -357,7 +356,10 @@ int main(int argc, char *args[])
 					westList.Move();
 					southList.Move();
 
-					detect->collision();
+					northList.collision();
+					eastList.collision();
+					westList.collision();
+					southList.collision();
 				}
 
 				//Update the surface

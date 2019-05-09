@@ -7,6 +7,7 @@ Queue::Queue()
 {
   head = NULL;
   tail = NULL;
+  collision_ = false;
 }
 
 Queue::~Queue()
@@ -117,4 +118,35 @@ void Queue::Move()
       temp->unit->Move();
       temp=temp->next;
     }
+}
+
+bool Queue::collision(){
+  Node* temp = head;
+  if(temp != NULL){
+    while(temp->next != NULL)
+    {
+      Unit* unit1 = temp->unit;
+      Unit* unit2 = temp->next->unit;
+      int firstX = unit1->GetX();
+      int firstY = unit1->GetY();
+
+      int secondX = unit2->GetX();
+      int secondY = unit2->GetY();
+      int boundX = unit1->GetWidth();
+      int boundY = unit1->GetHeight();
+      if((secondX > firstX and secondX < firstX + boundX) 
+        and (secondY > firstY and secondY < firstY + boundY)) {
+          unit1->crashed();
+          unit2->crashed();
+          collision_ = true;
+      }
+
+      temp=temp->next;
+
+    }
+
+  }
+
+  return collision_;
+  
 }

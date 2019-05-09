@@ -39,5 +39,5 @@ class LTexture
 	//Image dimensions
 	int mWidth;
 	int mHeight;
-	double angle;
+	double angle_;
 };

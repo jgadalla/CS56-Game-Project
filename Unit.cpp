@@ -18,7 +18,7 @@ unitTexture(image), direction_(direction), allowsMove_(true), keydown_(false), c
       y = YMAX + 50;
       break;
     case EAST:
-      //unitTexture->setAngle(90);
+      unitTexture->setAngle(90);
       x = -50;
       y = YMID + 30;
       break;
@@ -30,10 +30,8 @@ unitTexture(image), direction_(direction), allowsMove_(true), keydown_(false), c
     default:
           x = XMID - 30;
           y = -50;
+          break;
   }
-
-  this->width = unitTexture->getWidth();
-  this->height = unitTexture->getHeight();
 
 }
 
@@ -175,14 +173,24 @@ void Unit::Render(SDL_Renderer* gRenderer, bool debug)
   unitTexture->render( x, y, unitTexture->getTexRect(x,y), NULL, SDL_FLIP_NONE, gRenderer );
   if(debug == true)
     {
-      SDL_Rect rect = { x - width/2, y - height/2, width, height };
+      SDL_Rect rect = { x - width/2, y - height/2, width, height};
       SDL_SetRenderDrawColor( gRenderer, 0xFF, 0x00, 0x00, 0xFF );
       SDL_RenderDrawRect( gRenderer, &rect );
     }
 }
 
 void Unit::Render(SDL_Renderer* gRenderer){
-  unitTexture->render(x,y,gRenderer);
+
+  SDL_Rect clip;
+  clip.x = x;
+  clip.y = y;
+  clip.w = GetWidth();
+  clip.h = GetHeight();
+
+  SDL_Point center = {x + GetWidth()/2, y + GetHeight()/2};
+
+  unitTexture->render(x, y, &clip, &center, SDL_FLIP_NONE, gRenderer);
+  //unitTexture->render(x,y,gRenderer);
 }
 
 int Unit::GetWidth()

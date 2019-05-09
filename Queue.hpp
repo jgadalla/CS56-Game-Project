@@ -9,6 +9,7 @@ class Queue
   private:
     Node* head;
     Node* tail;
+    bool collision_;
 
   public:
     Queue();
@@ -19,4 +20,5 @@ class Queue
     void Render(SDL_Renderer* gRenderer);
     void Move();
     void setKey();
+    bool collision();
 };
